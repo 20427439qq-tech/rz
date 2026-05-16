@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>判断系统 Mobile UI</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f5ef;
+      --surface: #fffdf8;
+      --surface-2: #f8faf4;
+      --ink: #17201a;
+      --muted: #667066;
+      --line: #e0e5da;
+      --green: #147a54;
+      --green-soft: #dff1e8;
+      --blue: #2d5c9a;
+      --blue-soft: #e3ecfa;
+      --amber: #986116;
+      --amber-soft: #f6ead5;
+      --red: #b24b43;
+      --red-soft: #fae7e3;
+      --shadow: 0 16px 42px rgba(31, 45, 35, .12);
+      --radius: 22px;
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(20, 122, 84, .12), transparent 34%),
+        linear-gradient(180deg, #fafbf7 0%, var(--bg) 46%, #ecefe7 100%);
+    }
+
+    button, textarea, input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .phone-stage {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+    }
+
+    .phone {
+      width: min(430px, 100vw);
+      height: min(920px, 100vh);
+      background: var(--bg);
+      border: 1px solid rgba(23, 32, 26, .08);
+      border-radius: 38px;
+      overflow: hidden;
+      box-shadow: 0 28px 80px rgba(23, 32, 26, .25);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 16px 104px;
+      scrollbar-width: none;
+    }
+
+    .app-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .status {
+      height: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .grab {
+      width: 74px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(23, 32, 26, .16);
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 14px 0 18px;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #147a54, #2d5c9a);
+      color: white;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow);
+      flex: 0 0 auto;
+    }
+
+    .title-block {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .kicker {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 3px;
+    }
+
+    h1, h2, h3, p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 25px;
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 20px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 16px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.58;
+      font-size: 14px;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      background: var(--surface);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 22px rgba(31, 45, 35, .06);
+      flex: 0 0 auto;
+    }
+
+    .hero-card {
+      background: linear-gradient(145deg, #173c2f 0%, #167551 58%, #2d5c9a 100%);
+      border-radius: var(--radius);
+      padding: 20px;
+      color: white;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -34px -44px auto;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 26px solid rgba(255, 255, 255, .10);
+    }
+
+    .hero-card p {
+      color: rgba(255, 255, 255, .82);
+      margin-top: 8px;
+      max-width: 315px;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill {
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      background: #eef2ea;
+      white-space: nowrap;
+    }
+
+    .pill.light {
+      color: white;
+      background: rgba(255, 255, 255, .16);
+      border: 1px solid rgba(255, 255, 255, .18);
+    }
+
+    .pill.green {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .pill.blue {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .pill.amber {
+      color: var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .pill.red {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 22px 2px 10px;
+    }
+
+    .section-head a {
+      color: var(--green);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 10px 28px rgba(31, 45, 35, .07);
+    }
+
+    .card + .card {
+      margin-top: 12px;
+    }
+
+    .today-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .viewpoint {
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--ink);
+      font-weight: 750;
+    }
+
+    .progress-line {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+    }
+
+    .progress-line span {
+      height: 6px;
+      border-radius: 999px;
+      background: var(--green-soft);
+    }
+
+    .primary {
+      width: 100%;
+      min-height: 50px;
+      border-radius: 17px;
+      background: var(--green);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      font-weight: 750;
+      box-shadow: 0 12px 28px rgba(20, 122, 84, .24);
+    }
+
+    .secondary {
+      min-height: 42px;
+      border-radius: 15px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 12px;
+      font-weight: 700;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .quick-card {
+      min-height: 96px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      padding: 12px;
+      display: grid;
+      align-content: space-between;
+    }
+
+    .quick-card strong {
+      display: block;
+      font-size: 21px;
+      line-height: 1;
+      margin-top: 10px;
+    }
+
+    .quick-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .flow-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      margin: 12px 0 14px;
+    }
+
+    .flow-tab {
+      min-height: 40px;
+      border-radius: 15px;
+      color: var(--muted);
+      background: #eaeee6;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .flow-tab.active {
+      color: white;
+      background: var(--green);
+    }
+
+    textarea, input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fffefa;
+      border-radius: 18px;
+      padding: 14px;
+      outline: none;
+      color: var(--ink);
+    }
+
+    textarea {
+      min-height: 124px;
+      resize: none;
+      line-height: 1.6;
+    }
+
+    textarea:focus, input:focus {
+      border-color: rgba(20, 122, 84, .5);
+      box-shadow: 0 0 0 4px rgba(20, 122, 84, .10);
+    }
+
+    .input-tools {
+      display: flex;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .tool {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+    }
+
+    .prompt-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .prompt-item {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border-radius: 18px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+    }
+
+    .prompt-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .prompt-item b {
+      font-size: 14px;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .scan-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .scene-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .scene-top {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .scene-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: var(--blue);
+      background: var(--blue-soft);
+      flex: 0 0 auto;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: #edf1e9;
+      border-radius: 15px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .segmented button {
+      min-height: 34px;
+      border-radius: 12px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 12px;
+    }
+
+    .segmented button.active {
+      color: var(--ink);
+      background: var(--surface);
+      box-shadow: 0 4px 12px rgba(31, 45, 35, .08);
+    }
+
+    .route-result {
+      margin-top: 16px;
+      background: rgba(255, 253, 248, .92);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: 24px;
+      padding: 14px;
+    }
+
+    .route-result .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .result-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      color: var(--green);
+      background: var(--green-soft);
+      flex: 0 0 auto;
+    }
+
+    .result-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .mini-btn {
+      min-height: 42px;
+      border-radius: 15px;
+      background: var(--surface-2);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .mini-btn.primary-mini {
+      background: var(--green);
+      color: white;
+      border-color: transparent;
+    }
+
+    .seed-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .seed-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .seed-fields {
+      display: grid;
+      gap: 9px;
+    }
+
+    .field-line {
+      padding-top: 9px;
+      border-top: 1px solid var(--line);
+    }
+
+    .field-line b {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .match-box {
+      border-radius: 22px;
+      padding: 16px;
+      background: linear-gradient(180deg, #fffdf8, #f4f8ef);
+      border: 1px solid var(--line);
+    }
+
+    .match-arrow {
+      width: 40px;
+      height: 40px;
+      margin: 12px auto;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .score-row {
+      display: grid;
+      gap: 7px;
+      margin-top: 13px;
+    }
+
+    .score-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .bar {
+      height: 9px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e9eee6;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--green);
+    }
+
+    .bottom-nav {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      height: 70px;
+      border-radius: 25px;
+      background: rgba(255, 253, 248, .92);
+      border: 1px solid rgba(224, 229, 218, .9);
+      box-shadow: 0 16px 40px rgba(31, 45, 35, .14);
+      backdrop-filter: blur(18px);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      padding: 7px;
+      z-index: 8;
+    }
+
+    .nav-btn {
+      border-radius: 18px;
+      background: transparent;
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      gap: 3px;
+      font-size: 11px;
+    }
+
+    .nav-btn.active {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @media (max-width: 520px) {
+      .phone-stage {
+        padding: 0;
+        display: block;
+      }
+
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        border: 0;
+        box-shadow: none;
+      }
+
+      .status {
+        padding-top: env(safe-area-inset-top);
+        height: calc(16px + env(safe-area-inset-top));
+      }
+
+      .bottom-nav {
+        bottom: max(10px, env(safe-area-inset-bottom));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-stage">
+    <div class="phone">
+      <div class="app-scroll" id="scrollArea">
+        <div class="status"><div class="grab"></div></div>
+
+        <section class="screen active" id="home">
+          <header class="top">
+            <div class="avatar"><i data-lucide="brain-circuit"></i></div>
+            <div class="title-block">
+              <div class="kicker">今天 · 观点训练</div>
+              <h1>训练一个判断</h1>
+            </div>
+            <button class="icon-btn" title="提醒"><i data-lucide="bell"></i></button>
+          </header>
+
+          <article class="hero-card">
+            <h2>每天训练一个观点，持续升级判断系统</h2>
+            <p>不强制当天落地。先理解、扫描、沉淀，等真实经营问题出现时再激活。</p>
+            <div class="hero-meta">
+              <span class="pill light"><i data-lucide="flame"></i>连续 7 天</span>
+              <span class="pill light"><i data-lucide="sprout"></i>6 个种子待匹配</span>
+            </div>
+          </article>
+
+          <div class="section-head">
+            <h2>今日主线</h2>
+            <a href="#" data-goto="train">继续</a>
+          </div>
+
+          <article class="card today-card">
+            <div>
+              <span class="pill green">认知种子路径</span>
+            </div>
+            <p class="viewpoint">真正的数字化，是让真实被看见。</p>
+            <div class="progress-line" aria-label="今日训练进度">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <button class="primary" data-goto="train"><i data-lucide="pen-line"></i>进入今日训练</button>
+          </article>
+
+          <div class="section-head">
+            <h2>认知资产</h2>
+            <a href="#" data-goto="library">查看</a>
+          </div>
+
+          <div class="quick-grid">
+            <article class="quick-card">
+              <span>观点池</span>
+              <strong>23</strong>
+              <span>新增 1</span>
+            </article>
+            <article class="quick-card">
+              <span>观察任务</span>
+              <strong>3</strong>
+              <span>2 个进行中</span>
+            </article>
+            <article class="quick-card">
+              <span>问题落地</span>
+              <strong>2</strong>
+              <span>本周完成</span>
+            </article>
+          </div>
+
+          <div class="section-head">
+            <h2>待触发</h2>
+          </div>
+
+          <article class="card seed-card">
+            <div class="seed-head">
+              <div>
+                <h3>资本不是生长力，资本是放大器</h3>
+                <p>当准备扩库存、招人、上新系统时提醒。</p>
+              </div>
+              <span class="pill amber">待匹配</span>
+            </div>
+          </article>
+        </section>
+
+        <section class="screen" id="train">
+          <header class="top">
+            <button class="icon-btn" data-goto="home" title="返回"><i data-lucide="chevron-left"></i></button>
+            <div class="title-block">
+              <div class="kicker">今日训练</div>
+              <h1>观点输入</h1>
+            </div>
+            <button class="icon-btn" title="保存"><i data-lucide="save"></i></button>
+          </header>
+
+          <div class="flow-tabs">
+            <button class="flow-tab active">观点</button>
+            <button class="flow-tab">理解</button>
+            <button class="flow-tab">扫描</button>
+            <button class="flow-tab">分流</button>
+          </div>
+
+          <article class="card">
+            <h2>今天只输入一个观点</h2>
+            <p style="margin-top:6px">一句话、一段摘录、截图或会议记录都可以。</p>
+            <div class="input-tools">
+              <button class="tool" title="文字"><i data-lucide="type"></i></button>
+              <button class="tool" title="语音"><i data-lucide="mic"></i></button>
+              <button class="tool" title="截图"><i data-lucide="image"></i></button>
+              <button class="tool" title="摘录"><i data-lucide="file-text"></i></button>
+            </div>
+            <textarea>真正的数字化，是让真实被看见。</textarea>
+          </article>
+
+          <div class="section-head">
+            <h2>理解训练</h2>
+          </div>
+
+          <div class="prompt-list">
+            <article class="prompt-item">
+              <div class="prompt-icon"><i data-lucide="message-square-text"></i></div>
+              <div>
+                <b>用自己的话讲清楚</b>
+                <p>不是有软件、有报表就是数字化，而是企业真实状态能被系统显化。</p>
+              </div>
+            </article>
+            <article class="prompt-item">
+              <div class="prompt-icon"><i data-lucide="git-branch"></i></div>
+              <div>
+                <b>看见因果链</b>
+                <p>真实被看见，差距才会被命名；差距被命名，动作才可能进入流程。</p>
+              </div>
+            </article>
+            <article class="prompt-item">
+              <div class="prompt-icon"><i data-lucide="scan-search"></i></div>
+              <div>
+                <b>旧模型觉察</b>
+                <p>以前更关注有没有系统，现在要看系统有没有暴露真实差距。</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="section-head">
+            <h2>企业场景扫描</h2>
+          </div>
+
+          <div class="scan-stack" id="scanStack"></div>
+
+          <div class="route-result">
+            <div class="row">
+              <div class="result-icon" id="resultIcon"><i data-lucide="sprout"></i></div>
+              <div>
+                <h3 id="routeTitle">生成认知种子</h3>
+                <p id="routeText">暂时不硬落地，保存触发条件，等待未来问题出现时匹配。</p>
+              </div>
+            </div>
+            <div class="result-actions">
+              <button class="mini-btn" id="weakBtn">转观察</button>
+              <button class="mini-btn primary-mini" id="strongBtn">保存沉淀</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="library">
+          <header class="top">
+            <div class="avatar"><i data-lucide="database"></i></div>
+            <div class="title-block">
+              <div class="kicker">认知资产</div>
+              <h1>三个池</h1>
+            </div>
+            <button class="icon-btn" title="新增"><i data-lucide="plus"></i></button>
+          </header>
+
+          <article class="card seed-card">
+            <div class="seed-head">
+              <div>
+                <h2>观点池</h2>
+                <p>今天吸收了什么新认知。</p>
+              </div>
+              <span class="pill green">23 条</span>
+            </div>
+            <div class="seed-fields">
+              <div class="field-line"><b>真正的数字化，是让真实被看见。</b><p>待匹配：销售、库存、品质。</p></div>
+              <div class="field-line"><b>客户不是订单，而是长期资产。</b><p>观察中：重点客户沉默风险。</p></div>
+            </div>
+          </article>
+
+          <article class="card seed-card">
+            <div class="seed-head">
+              <div>
+                <h2>问题池</h2>
+                <p>企业里真实存在什么问题。</p>
+              </div>
+              <span class="pill blue">8 条</span>
+            </div>
+            <div class="field-line"><b>销售日报写了很多，但不知道有没有推进客户。</b><p>已匹配观点：真实被看见。</p></div>
+          </article>
+
+          <article class="card seed-card">
+            <div class="seed-head">
+              <div>
+                <h2>困惑池</h2>
+                <p>还没有说清楚的经营疑问。</p>
+              </div>
+              <span class="pill amber">11 条</span>
+            </div>
+            <div class="field-line"><b>AI 很重要，但不知道从哪里真正落地。</b><p>待观点激活。</p></div>
+          </article>
+        </section>
+
+        <section class="screen" id="match">
+          <header class="top">
+            <div class="avatar"><i data-lucide="git-compare-arrows"></i></div>
+            <div class="title-block">
+              <div class="kicker">未来触发</div>
+              <h1>匹配中心</h1>
+            </div>
+            <button class="icon-btn" title="搜索"><i data-lucide="search"></i></button>
+          </header>
+
+          <article class="card">
+            <h2>输入一个真实问题</h2>
+            <p style="margin-top:6px">系统会从观点池和认知种子里找可激活的判断。</p>
+            <textarea style="margin-top:12px">重点客户最近复购下降，销售说一直在跟，但系统里看不到下一步动作。</textarea>
+            <button class="primary" style="margin-top:12px"><i data-lucide="sparkles"></i>自动匹配观点</button>
+          </article>
+
+          <div class="section-head">
+            <h2>推荐匹配</h2>
+          </div>
+
+          <div class="match-box">
+            <h3>真实问题</h3>
+            <p style="margin-top:6px">客户复购下降，但销售推进证据不足。</p>
+            <div class="match-arrow"><i data-lucide="arrow-down-up"></i></div>
+            <h3>可激活观点</h3>
+            <p style="margin-top:6px">客户不是订单，而是长期资产。真正的数字化，是让真实被看见。</p>
+          </div>
+
+          <article class="card" style="margin-top:12px">
+            <h3>问题重构建议</h3>
+            <p style="margin-top:6px">从“销售有没有跟”改成“客户资产有没有被系统化经营”。</p>
+          </article>
+        </section>
+
+        <section class="screen" id="score">
+          <header class="top">
+            <div class="avatar"><i data-lucide="chart-no-axes-column-increasing"></i></div>
+            <div class="title-block">
+              <div class="kicker">成长复盘</div>
+              <h1>评分</h1>
+            </div>
+            <button class="icon-btn" title="筛选"><i data-lucide="sliders-horizontal"></i></button>
+          </header>
+
+          <article class="hero-card">
+            <h2>今日观点理解分 24 / 30</h2>
+            <p>企业落地分只在强关联路径启用，避免为了行动而行动。</p>
+            <div class="hero-meta">
+              <span class="pill light">表达 4</span>
+              <span class="pill light">旧模型 5</span>
+              <span class="pill light">扫描 4</span>
+            </div>
+          </article>
+
+          <div class="section-head">
+            <h2>六项评分</h2>
+          </div>
+
+          <article class="card" id="scoreList"></article>
+
+          <div class="section-head">
+            <h2>本周复利</h2>
+          </div>
+          <div class="quick-grid">
+            <article class="quick-card"><span>观点</span><strong>7</strong><span>每日完成</span></article>
+            <article class="quick-card"><span>种子</span><strong>6</strong><span>待触发</span></article>
+            <article class="quick-card"><span>落地</span><strong>2</strong><span>已实验</span></article>
+          </div>
+        </section>
+      </div>
+
+      <nav class="bottom-nav" aria-label="底部导航">
+        <button class="nav-btn active" data-goto="home"><i data-lucide="home"></i><span>首页</span></button>
+        <button class="nav-btn" data-goto="train"><i data-lucide="notebook-pen"></i><span>训练</span></button>
+        <button class="nav-btn" data-goto="library"><i data-lucide="database"></i><span>池子</span></button>
+        <button class="nav-btn" data-goto="match"><i data-lucide="git-compare"></i><span>匹配</span></button>
+        <button class="nav-btn" data-goto="score"><i data-lucide="chart-column"></i><span>评分</span></button>
+      </nav>
+    </div>
+  </div>
+
+  <script>
+    const scenes = [
+      ["销售", "CRM 记录是否真实，推进动作有没有证据？", "handshake", 0],
+      ["客户", "客户画像、复购潜力和沉默风险是否被系统看见？", "users", 1],
+      ["产品", "新品开发是否基于真实需求和交付能力？", "package-search", 2],
+      ["品质", "每卷面料真实质量状态是否可追溯？", "badge-check", 0],
+      ["库存", "理论库存、可售库存和滞销压力是否一致？", "boxes", 1],
+      ["供应链", "供应商稳定性、延期风险和质量波动是否显化？", "truck", 2],
+      ["员工", "执行靠提醒，还是关键动作已进入流程？", "user-check", 3],
+      ["数字化和 AI", "AI 是否基于真实数据判断，而不是生成更多文本？", "bot", 2]
+    ];
+
+    const routeCopy = {
+      seed: ["sprout", "生成认知种子", "暂时不硬落地，保存触发条件，等待未来问题出现时匹配。"],
+      observe: ["eye", "生成观察任务", "有一点启发但问题还不清楚，未来 7 天先观察企业现象。"],
+      problem: ["target", "进入问题落地", "已经发现强关联，继续做问题重构、证据校准和最小行动实验。"]
+    };
+
+    const scores = [
+      ["表达清晰度", 4],
+      ["因果理解度", 4],
+      ["旧模型觉察度", 5],
+      ["变量识别度", 4],
+      ["边界识别度", 3],
+      ["场景扫描度", 4]
+    ];
+
+    function renderScan() {
+      const labels = ["强相关", "弱相关", "暂不相关", "不确定"];
+      document.getElementById("scanStack").innerHTML = scenes.map(([name, desc, icon, active], index) => `
+        <article class="scene-card">
+          <div class="scene-top">
+            <div class="scene-icon"><i data-lucide="${icon}"></i></div>
+            <div><h3>${name}</h3><p>${desc}</p></div>
+          </div>
+          <div class="segmented" data-index="${index}">
+            ${labels.map((label, i) => `<button class="${i === active ? "active" : ""}">${label}</button>`).join("")}
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderScores() {
+      document.getElementById("scoreList").innerHTML = scores.map(([name, value]) => `
+        <div class="score-row">
+          <div class="score-meta"><span>${name}</span><strong>${value} / 5</strong></div>
+          <div class="bar"><span style="width:${value * 20}%"></span></div>
+        </div>
+      `).join("");
+    }
+
+    function updateRoute(route) {
+      const [icon, title, text] = routeCopy[route];
+      document.getElementById("resultIcon").innerHTML = `<i data-lucide="${icon}"></i>`;
+      document.getElementById("routeTitle").textContent = title;
+      document.getElementById("routeText").textContent = text;
+      lucide.createIcons();
+    }
+
+    function go(screenId) {
+      document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
+      document.getElementById(screenId).classList.add("active");
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.goto === screenId);
+      });
+      document.getElementById("scrollArea").scrollTop = 0;
+    }
+
+    renderScan();
+    renderScores();
+    updateRoute("seed");
+    lucide.createIcons();
+
+    document.querySelectorAll("[data-goto]").forEach(item => {
+      item.addEventListener("click", event => {
+        event.preventDefault();
+        go(item.dataset.goto);
+      });
+    });
+
+    document.querySelectorAll(".segmented button").forEach(button => {
+      button.addEventListener("click", () => {
+        const group = button.parentElement;
+        group.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        const text = button.textContent.trim();
+        if (text === "强相关") updateRoute("problem");
+        if (text === "弱相关") updateRoute("observe");
+        if (text === "暂不相关" || text === "不确定") updateRoute("seed");
+      });
+    });
+
+    document.getElementById("weakBtn").addEventListener("click", () => updateRoute("observe"));
+    document.getElementById("strongBtn").addEventListener("click", () => updateRoute("seed"));
+  </script>
+</body>
+</html>

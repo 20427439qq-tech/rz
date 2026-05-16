@@ -1,0 +1,1209 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>判断系统 - 每日观点认知训练</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f7f4;
+      --panel: #ffffff;
+      --ink: #17201a;
+      --muted: #657067;
+      --line: #dfe5dc;
+      --soft: #edf1ea;
+      --green: #1c7c54;
+      --green-2: #dff1e8;
+      --blue: #315f9e;
+      --blue-2: #e1ebfa;
+      --amber: #9b6417;
+      --amber-2: #f6ebd8;
+      --red: #b44a46;
+      --red-2: #f7e5e3;
+      --cyan: #207980;
+      --cyan-2: #dff3f4;
+      --shadow: 0 18px 45px rgba(32, 45, 35, .08);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,0) 240px),
+        var(--bg);
+    }
+
+    button, textarea, input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      padding: 22px 18px;
+      background: rgba(255,255,255,.74);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      min-height: 44px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(145deg, #1c7c54, #315f9e);
+      box-shadow: var(--shadow);
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 750;
+      line-height: 1.15;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav button {
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      min-height: 42px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 0 11px;
+      text-align: left;
+    }
+
+    .nav button.active,
+    .nav button:hover {
+      color: var(--ink);
+      background: var(--soft);
+    }
+
+    .side-metric {
+      margin-top: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: var(--panel);
+    }
+
+    .side-metric strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+      margin: 4px 0;
+    }
+
+    .side-metric span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .main {
+      padding: 26px;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .headline h1 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 38px);
+      letter-spacing: 0;
+      line-height: 1.16;
+    }
+
+    .headline p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 760px;
+      line-height: 1.65;
+    }
+
+    .primary-action {
+      border: 0;
+      border-radius: 8px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      background: var(--green);
+      padding: 0 15px;
+      white-space: nowrap;
+      box-shadow: var(--shadow);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) 370px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      padding: 18px 18px 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .panel-note {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fbfcfa;
+      color: var(--muted);
+      min-height: 64px;
+    }
+
+    .step strong {
+      display: block;
+      color: var(--ink);
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .step.active {
+      background: var(--green-2);
+      border-color: #9fd2ba;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    textarea, input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      outline: none;
+      background: #fbfcfa;
+      color: var(--ink);
+      min-height: 48px;
+    }
+
+    textarea {
+      min-height: 118px;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    textarea:focus, input:focus {
+      border-color: #7ab79a;
+      box-shadow: 0 0 0 3px rgba(28,124,84,.12);
+    }
+
+    .input-tools {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .icon-button, .ghost-button {
+      border: 1px solid var(--line);
+      background: #fbfcfa;
+      border-radius: 8px;
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 12px;
+      color: var(--ink);
+    }
+
+    .icon-button {
+      width: 38px;
+      padding: 0;
+    }
+
+    .ghost-button:hover,
+    .icon-button:hover {
+      background: var(--soft);
+    }
+
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .prompt {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfcfa;
+      min-height: 74px;
+    }
+
+    .prompt b {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .prompt span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .scan-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .scan-row {
+      display: grid;
+      grid-template-columns: 106px minmax(0, 1fr) 290px;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfa;
+    }
+
+    .scene {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 750;
+    }
+
+    .scan-row p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 5px;
+      background: var(--soft);
+      border-radius: 8px;
+      padding: 4px;
+    }
+
+    .segmented button {
+      border: 0;
+      border-radius: 6px;
+      min-height: 32px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .segmented button.active {
+      background: var(--panel);
+      color: var(--ink);
+      box-shadow: 0 2px 10px rgba(36, 48, 39, .08);
+    }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .route-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfa;
+      min-height: 170px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .route-card.active {
+      border-color: #8abfa8;
+      background: var(--green-2);
+    }
+
+    .route-card h3 {
+      margin: 0;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .route-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .score-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .score-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .score-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .bar {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--soft);
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--green);
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfcfa;
+      min-height: 92px;
+    }
+
+    .mini-card span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 22px;
+      margin-top: 6px;
+    }
+
+    .seed-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfa;
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .seed-field {
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .seed-field:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .seed-field b {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .seed-field p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .tag.green {
+      color: var(--green);
+      background: var(--green-2);
+    }
+
+    .tag.blue {
+      color: var(--blue);
+      background: var(--blue-2);
+    }
+
+    .tag.amber {
+      color: var(--amber);
+      background: var(--amber-2);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--blue);
+      border-radius: 8px;
+    }
+
+    .timeline-item h4 {
+      margin: 0 0 4px;
+      font-size: 14px;
+    }
+
+    .timeline-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .pool-layout {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .pool-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      min-height: 210px;
+      display: grid;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .pool-card h3 {
+      margin: 0;
+      font-size: 17px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pool-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .match-card {
+      display: grid;
+      grid-template-columns: 1fr 46px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .match-side {
+      min-height: 152px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfa;
+    }
+
+    .match-side h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .match-side p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .match-arrow {
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      background: var(--cyan-2);
+      color: var(--cyan);
+      display: grid;
+      place-items: center;
+    }
+
+    @media (max-width: 1120px) {
+      .app {
+        grid-template-columns: 88px minmax(0, 1fr);
+      }
+
+      .brand-text,
+      .nav span,
+      .side-metric {
+        display: none;
+      }
+
+      .sidebar {
+        align-items: center;
+      }
+
+      .nav button {
+        width: 48px;
+        justify-content: center;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .scan-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        display: block;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        padding: 14px;
+      }
+
+      .brand-text {
+        display: block;
+      }
+
+      .nav {
+        grid-template-columns: repeat(5, 1fr);
+        width: 100%;
+      }
+
+      .nav span {
+        display: none;
+      }
+
+      .nav button {
+        width: auto;
+      }
+
+      .main {
+        padding: 16px;
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .stepper,
+      .prompt-grid,
+      .route-grid,
+      .pool-layout,
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .match-card {
+        grid-template-columns: 1fr;
+      }
+
+      .match-arrow {
+        justify-self: center;
+        transform: rotate(90deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><i data-lucide="brain-circuit"></i></div>
+        <div class="brand-text">
+          <div class="brand-title">判断系统</div>
+          <div class="brand-sub">每日观点认知训练</div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="主导航">
+        <button class="active" data-view-target="today" title="今日训练">
+          <i data-lucide="notebook-pen"></i><span>今日训练</span>
+        </button>
+        <button data-view-target="pools" title="三个池">
+          <i data-lucide="database"></i><span>三个池</span>
+        </button>
+        <button data-view-target="match" title="匹配中心">
+          <i data-lucide="git-compare-arrows"></i><span>匹配中心</span>
+        </button>
+        <button data-view-target="tasks" title="观察任务">
+          <i data-lucide="scan-eye"></i><span>观察任务</span>
+        </button>
+        <button data-view-target="review" title="复盘评分">
+          <i data-lucide="chart-no-axes-column-increasing"></i><span>复盘评分</span>
+        </button>
+      </nav>
+
+      <div class="side-metric">
+        <span>本周观点理解均分</span>
+        <strong>4.1</strong>
+        <span>6 个认知种子待匹配</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="view active" id="today">
+        <div class="topbar">
+          <div class="headline">
+            <h1>今天训练一个观点</h1>
+            <p>先理解，再扫描企业场景；强关联进入问题落地，弱关联形成观察任务，暂不相关沉淀为认知种子。</p>
+          </div>
+          <button class="primary-action" id="saveSeed">
+            <i data-lucide="save"></i>保存今日沉淀
+          </button>
+        </div>
+
+        <div class="layout">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 class="panel-title">今日观点训练</h2>
+                <p class="panel-note">当前路径：观点输入 → 理解训练 → 企业扫描 → 分流处理</p>
+              </div>
+              <span class="tag green" id="routeStatus">认知种子</span>
+            </div>
+            <div class="panel-body">
+              <div class="stepper" aria-label="训练步骤">
+                <div class="step active"><strong>1 观点</strong>输入一句新认知</div>
+                <div class="step active"><strong>2 理解</strong>因果、变量、边界</div>
+                <div class="step active"><strong>3 旧模型</strong>看见默认假设</div>
+                <div class="step active"><strong>4 扫描</strong>八个经营场景</div>
+                <div class="step active"><strong>5 分流</strong>落地或沉淀</div>
+              </div>
+
+              <div class="field">
+                <label for="viewpoint">今日观点</label>
+                <div class="input-tools">
+                  <button class="icon-button" title="文字"><i data-lucide="type"></i></button>
+                  <button class="icon-button" title="语音"><i data-lucide="mic"></i></button>
+                  <button class="icon-button" title="截图"><i data-lucide="image"></i></button>
+                  <button class="icon-button" title="文章摘录"><i data-lucide="file-text"></i></button>
+                </div>
+                <textarea id="viewpoint">真正的数字化，是让真实被看见。</textarea>
+              </div>
+
+              <div class="prompt-grid">
+                <div class="prompt">
+                  <b>我的理解</b>
+                  <span>不是有软件、有报表就是数字化，而是客户、库存、质量、销售动作和供应链状态能被真实显化。</span>
+                </div>
+                <div class="prompt">
+                  <b>它反对什么</b>
+                  <span>反对把 ERP、CRM、大屏和 AI 工具本身等同于数字化成果。</span>
+                </div>
+                <div class="prompt">
+                  <b>旧模型觉察</b>
+                  <span>以前更关注有没有系统，现在要看系统有没有暴露真实差距。</span>
+                </div>
+                <div class="prompt">
+                  <b>边界和反例</b>
+                  <span>真实显化需要治理节奏，不能把所有信息一次性压给一线。</span>
+                </div>
+              </div>
+
+              <div style="height:18px"></div>
+
+              <div class="panel" style="box-shadow:none">
+                <div class="panel-head">
+                  <div>
+                    <h2 class="panel-title">企业场景扫描</h2>
+                    <p class="panel-note">每个场景只需判断关联强弱。</p>
+                  </div>
+                </div>
+                <div class="panel-body">
+                  <div class="scan-list" id="scanList"></div>
+                </div>
+              </div>
+
+              <div style="height:18px"></div>
+
+              <div class="route-grid">
+                <article class="route-card" data-route="problem">
+                  <h3><i data-lucide="target"></i>问题落地</h3>
+                  <p>适合强关联。继续做问题重构、证据校准、价值取舍和最小行动实验。</p>
+                  <span class="tag blue">强关联</span>
+                </article>
+                <article class="route-card" data-route="observe">
+                  <h3><i data-lucide="eye"></i>观察任务</h3>
+                  <p>适合弱关联。先观察企业现象，未来再判断是否转成真实问题。</p>
+                  <span class="tag amber">弱关联</span>
+                </article>
+                <article class="route-card active" data-route="seed">
+                  <h3><i data-lucide="sprout"></i>认知种子</h3>
+                  <p>适合暂不相关或不确定。保存触发条件，等待未来问题出现时自动匹配。</p>
+                  <span class="tag green">待匹配</span>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <aside class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 class="panel-title">今日沉淀</h2>
+                <p class="panel-note" id="resultNote">暂不进入行动，先沉淀为认知种子。</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="seed-card" id="resultCard"></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="pools">
+        <div class="topbar">
+          <div class="headline">
+            <h1>三个池</h1>
+            <p>观点、问题和困惑分别沉淀，再通过匹配中心产生新的判断。</p>
+          </div>
+          <button class="primary-action"><i data-lucide="plus"></i>新增条目</button>
+        </div>
+
+        <div class="pool-layout">
+          <article class="pool-card">
+            <h3><i data-lucide="lightbulb"></i>观点池</h3>
+            <p>真正的数字化，是让真实被看见。</p>
+            <p>客户不是订单，而是长期资产。</p>
+            <p>资本不是生长力，资本是放大器。</p>
+            <div class="tag-row"><span class="tag green">23 条</span><span class="tag">6 条待匹配</span></div>
+          </article>
+          <article class="pool-card">
+            <h3><i data-lucide="circle-alert"></i>问题池</h3>
+            <p>销售日报写了很多，但不知道是否真正推进客户。</p>
+            <p>库存显示有货，实际可售状态不稳定。</p>
+            <div class="tag-row"><span class="tag blue">8 条</span><span class="tag">3 条已落地</span></div>
+          </article>
+          <article class="pool-card">
+            <h3><i data-lucide="message-circle-question"></i>困惑池</h3>
+            <p>我觉得 AI 很重要，但不知道从哪里真正进入流程。</p>
+            <p>客户管理还是太靠个人感觉。</p>
+            <div class="tag-row"><span class="tag amber">11 条</span><span class="tag">4 条被观点激活</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="match">
+        <div class="topbar">
+          <div class="headline">
+            <h1>匹配中心</h1>
+            <p>当企业问题出现时，从观点池、认知种子和观察任务里找可用认知。</p>
+          </div>
+          <button class="primary-action"><i data-lucide="sparkles"></i>开始匹配</button>
+        </div>
+
+        <div class="match-card">
+          <div class="match-side">
+            <h3>真实问题</h3>
+            <p>重点客户最近复购下降，销售说一直在跟，但系统里看不到下一步动作和客户真实卡点。</p>
+          </div>
+          <div class="match-arrow"><i data-lucide="arrow-right-left"></i></div>
+          <div class="match-side">
+            <h3>可激活观点</h3>
+            <p>客户不是订单，而是长期资产。真正的数字化，是让真实被看见。AI 不只是提醒，而是识别风险。</p>
+          </div>
+        </div>
+
+        <div style="height:16px"></div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">推荐重构</h2>
+              <p class="panel-note">从“销售有没有跟”改成“客户资产有没有被系统化经营”。</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="dot"><i data-lucide="search"></i></div>
+                <div><h4>证据校准</h4><p>检查最近 30 天重点客户的联系记录、报价次数、异议类型和下一步字段完整度。</p></div>
+              </div>
+              <div class="timeline-item">
+                <div class="dot"><i data-lucide="flask-conical"></i></div>
+                <div><h4>行动实验</h4><p>选 10 个重点客户，用 AI 检查聊天记录中是否有明确下一步、电话介入和客户卡点。</p></div>
+              </div>
+              <div class="timeline-item">
+                <div class="dot"><i data-lucide="table-properties"></i></div>
+                <div><h4>系统沉淀</h4><p>CRM 增加下一步动作、下次联系时间、真实卡点、推进证据和 AI 评分字段。</p></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" id="tasks">
+        <div class="topbar">
+          <div class="headline">
+            <h1>观察任务</h1>
+            <p>弱关联观点先进入观察，记录现象，再决定是否转成真实问题。</p>
+          </div>
+          <button class="primary-action"><i data-lucide="plus"></i>新增观察</button>
+        </div>
+
+        <div class="layout">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 class="panel-title">未来 3 天</h2>
+                <p class="panel-note">观点：客户不是订单，而是长期资产。</p>
+              </div>
+              <span class="tag amber">进行中</span>
+            </div>
+            <div class="panel-body">
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="dot"><i data-lucide="users"></i></div>
+                  <div><h4>观察对象</h4><p>最近 90 天有复购潜力、但未进入重点维护的客户。</p></div>
+                </div>
+                <div class="timeline-item">
+                  <div class="dot"><i data-lucide="list-checks"></i></div>
+                  <div><h4>观察问题</h4><p>哪些客户只是被当成一次订单处理？哪些老客户沉默了但没有提前提醒？</p></div>
+                </div>
+                <div class="timeline-item">
+                  <div class="dot"><i data-lucide="arrow-up-right"></i></div>
+                  <div><h4>转化判断</h4><p>如果发现 5 个以上客户缺少维护标签，则转入问题池。</p></div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <aside class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 class="panel-title">记录入口</h2>
+                <p class="panel-note">观察不是马上改革，是带着新认知重新看企业。</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="field">
+                <label for="observeText">今日观察</label>
+                <textarea id="observeText" placeholder="记录今天看到的现象、证据或反例"></textarea>
+              </div>
+              <button class="ghost-button"><i data-lucide="send"></i>提交记录</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="review">
+        <div class="topbar">
+          <div class="headline">
+            <h1>复盘评分</h1>
+            <p>观点理解每日评分，企业落地只在强关联路径评分。</p>
+          </div>
+        </div>
+
+        <div class="layout">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 class="panel-title">观点理解分</h2>
+                <p class="panel-note">今日总分：24 / 30</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="score-list" id="scoreList"></div>
+            </div>
+          </section>
+          <aside class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 class="panel-title">本周复利</h2>
+                <p class="panel-note">认知资产的增长状态。</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="mini-grid">
+                <div class="mini-card"><span>新观点</span><strong>7</strong></div>
+                <div class="mini-card"><span>认知种子</span><strong>6</strong></div>
+                <div class="mini-card"><span>观察任务</span><strong>3</strong></div>
+                <div class="mini-card"><span>问题落地</span><strong>2</strong></div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const scenes = [
+      ["销售", "CRM 记录是否真实？销售推进有没有证据？", "handshake"],
+      ["客户", "客户画像、复购潜力和沉默风险是否被系统看见？", "users"],
+      ["产品", "新品开发是否基于真实客户需求和交付能力？", "package-search"],
+      ["品质", "每卷面料的真实质量状态是否可追溯？", "badge-check"],
+      ["库存", "理论库存、可售库存和滞销压力是否一致？", "boxes"],
+      ["供应链", "供应商稳定性、延期风险和质量波动是否显化？", "truck"],
+      ["员工", "执行靠提醒，还是关键动作已进入流程？", "user-check"],
+      ["数字化和 AI", "AI 是否基于真实数据判断，而不是生成更多文本？", "bot"]
+    ];
+
+    const scores = [
+      ["表达清晰度", 4],
+      ["因果理解度", 4],
+      ["旧模型觉察度", 5],
+      ["变量识别度", 4],
+      ["边界识别度", 3],
+      ["场景扫描度", 4]
+    ];
+
+    const resultTemplates = {
+      seed: {
+        label: "认知种子",
+        note: "暂不进入行动，先沉淀为认知种子。",
+        html: `
+          <div class="seed-field"><b>观点原文</b><p>真正的数字化，是让真实被看见。</p></div>
+          <div class="seed-field"><b>我的理解</b><p>系统要把客户、库存、质量、销售动作、供应链状态和员工执行的真实情况显化出来。</p></div>
+          <div class="seed-field"><b>旧模型</b><p>以前把数字化理解为有 ERP、CRM、大屏和 AI 工具，现在要看真实差距是否被看见。</p></div>
+          <div class="seed-field"><b>核心变量</b><p>真实数据、流程字段、推进证据、客户资产、库存可售性、AI 判断质量。</p></div>
+          <div class="seed-field"><b>未来触发</b><p>当系统数据很多但没人用、销售说跟进了但没有证据、库存显示有货但实际不可售时提醒。</p></div>
+          <div class="tag-row"><span class="tag green">待未来匹配</span><span class="tag">认知种子库</span></div>
+        `
+      },
+      observe: {
+        label: "观察任务",
+        note: "有启发但还不够明确，先生成观察任务。",
+        html: `
+          <div class="seed-field"><b>观察主题</b><p>真实是否被系统看见。</p></div>
+          <div class="seed-field"><b>观察周期</b><p>未来 7 天。</p></div>
+          <div class="seed-field"><b>观察对象</b><p>销售日报、CRM 跟进记录、客户下一步动作和库存可售状态。</p></div>
+          <div class="seed-field"><b>观察问题</b><p>哪些记录只是写了内容，不能证明真实推进？哪些数据看似完整但无法支持决策？</p></div>
+          <div class="seed-field"><b>转化条件</b><p>如果连续发现 3 类关键动作无法被系统验证，则转入问题池。</p></div>
+          <div class="tag-row"><span class="tag amber">观察中</span><span class="tag">弱关联</span></div>
+        `
+      },
+      problem: {
+        label: "问题落地",
+        note: "发现强关联，进入问题重构和行动实验。",
+        html: `
+          <div class="seed-field"><b>原始现象</b><p>销售日报写了很多，但不知道有没有真正推进客户。</p></div>
+          <div class="seed-field"><b>问题重构</b><p>不是日报问题，而是销售关键动作没有被系统真实识别。</p></div>
+          <div class="seed-field"><b>证据校准</b><p>抽查 10 个重点客户的聊天记录、电话记录、下一步动作和客户卡点字段。</p></div>
+          <div class="seed-field"><b>行动实验</b><p>用 AI 检查聊天记录中是否有明确下一步、电话介入、客户卡点和推进证据。</p></div>
+          <div class="seed-field"><b>系统沉淀</b><p>CRM 增加下一步动作、下次联系时间、真实卡点、推进证据和 AI 评分字段。</p></div>
+          <div class="tag-row"><span class="tag blue">进入落地</span><span class="tag">强关联</span></div>
+        `
+      }
+    };
+
+    function renderScanList() {
+      const list = document.getElementById("scanList");
+      list.innerHTML = scenes.map((scene, index) => `
+        <div class="scan-row">
+          <div class="scene"><i data-lucide="${scene[2]}"></i>${scene[0]}</div>
+          <p>${scene[1]}</p>
+          <div class="segmented" data-segment="${index}">
+            <button ${index === 0 || index === 3 ? "class='active'" : ""}>强相关</button>
+            <button ${index === 2 || index === 4 ? "class='active'" : ""}>弱相关</button>
+            <button>暂不相关</button>
+            <button ${index === 6 ? "class='active'" : ""}>不确定</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderScores() {
+      const list = document.getElementById("scoreList");
+      list.innerHTML = scores.map(([name, value]) => `
+        <div class="score-row">
+          <div class="score-meta"><span>${name}</span><strong>${value} / 5</strong></div>
+          <div class="bar"><span style="width:${value * 20}%"></span></div>
+        </div>
+      `).join("");
+    }
+
+    function setRoute(route) {
+      const template = resultTemplates[route];
+      document.getElementById("resultCard").innerHTML = template.html;
+      document.getElementById("resultNote").textContent = template.note;
+      document.getElementById("routeStatus").textContent = template.label;
+      document.querySelectorAll(".route-card").forEach(card => {
+        card.classList.toggle("active", card.dataset.route === route);
+      });
+      lucide.createIcons();
+    }
+
+    renderScanList();
+    renderScores();
+    setRoute("seed");
+
+    document.querySelectorAll(".nav button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".nav button").forEach(item => item.classList.remove("active"));
+        document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+        button.classList.add("active");
+        document.getElementById(button.dataset.viewTarget).classList.add("active");
+      });
+    });
+
+    document.querySelectorAll(".segmented button").forEach(button => {
+      button.addEventListener("click", () => {
+        button.parentElement.querySelectorAll("button").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+      });
+    });
+
+    document.querySelectorAll(".route-card").forEach(card => {
+      card.addEventListener("click", () => setRoute(card.dataset.route));
+    });
+
+    document.getElementById("saveSeed").addEventListener("click", () => {
+      const button = document.getElementById("saveSeed");
+      const old = button.innerHTML;
+      button.innerHTML = '<i data-lucide="check"></i>已保存';
+      lucide.createIcons();
+      setTimeout(() => {
+        button.innerHTML = old;
+        lucide.createIcons();
+      }, 1400);
+    });
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
