@@ -71,11 +71,16 @@ export interface BaseRecord {
 
 export interface Viewpoint extends BaseRecord {
   originalText: string
+  supportText?: string
+  sourceType?: 'manual' | 'web' | 'article' | 'course' | 'meeting' | 'chat' | 'ai-extract'
+  sourceTitle?: string
+  sourceUrl?: string
   myUnderstanding?: string
   causalChain?: string
   challengedOldModel?: string
   boundary?: string
   coreVariables: string[]
+  tags?: string[]
   status: 'draft' | 'trained' | 'seeded' | 'matched' | 'archived'
 }
 
@@ -112,6 +117,8 @@ export interface ObservationTask extends BaseRecord {
   viewpointId: string
   topic: string
   period: string
+  startDate: string
+  dueDate: string
   target: string
   questions: string[]
   status: 'open' | 'converted' | 'closed'
@@ -128,6 +135,8 @@ export interface ArchivedTrainingResult extends BaseRecord {
 export interface TrainingResult extends BaseRecord {
   viewpointId: string
   relationLevel: RelationLevel
+  scenes?: BusinessScene[]
+  aiScenes?: Partial<Record<BusinessScene, AiSceneDraft>>
   outcome: TrainingOutcome
   targetKind: ResultTargetKind
   targetId: string
@@ -162,6 +171,8 @@ export interface MatchCandidate {
 
 export interface ScoreSnapshot {
   id: string
+  viewpointId: string
+  resultId: string
   date: string
   understanding: number
   oldModelAwareness: number
@@ -180,6 +191,8 @@ export interface ScoreSummary {
     label: string
     value: number
     note: string
+    reason: string
+    deduction: string
   }>
 }
 

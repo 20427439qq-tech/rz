@@ -9,10 +9,21 @@ const pinia = createPinia()
 pinia.use(({ store }) => {
   const storageKey = `rz-judgment-system:${store.$id}`
   const savedState = window.localStorage.getItem(storageKey)
+  const defaultState = JSON.parse(JSON.stringify(store.$state))
 
   if (savedState) {
     try {
-      store.$patch(JSON.parse(savedState))
+      const parsedState = JSON.parse(savedState)
+      if (store.$id === 'app' && Array.isArray(parsedState.viewpoints) && Array.isArray(defaultState.viewpoints)) {
+        const reviewViewpoints = defaultState.viewpoints.filter((item: { id?: string }) =>
+          item.id?.startsWith('vp-review-'),
+        )
+        const preservedViewpoints = parsedState.viewpoints.filter(
+          (item: { id?: string; status?: string }) => item.status !== 'draft' && !item.id?.startsWith('vp-review-'),
+        )
+        parsedState.viewpoints = [...preservedViewpoints, ...reviewViewpoints]
+      }
+      store.$patch(parsedState)
     } catch {
       window.localStorage.removeItem(storageKey)
     }

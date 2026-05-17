@@ -23,7 +23,7 @@ const items: NavItem[] = [
   { label: '训练', to: '/training', icon: NotebookPen },
   { label: '三个池', to: '/pools', icon: Database },
   { label: '匹配', to: '/match', icon: GitCompareArrows },
-  { label: '复盘', to: '/score', icon: ChartColumn },
+  { label: '沉淀', to: '/score', icon: ChartColumn },
 ]
 
 const activePath = computed(() => (route.path.startsWith('/results') ? '/pools' : route.path))

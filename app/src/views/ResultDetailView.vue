@@ -7,6 +7,7 @@ import EmptyPanel from '../components/EmptyPanel.vue'
 import { useAppStore } from '../stores/appStore'
 import { businessSceneLabels, relationLabels } from '../models/domain'
 import type { BusinessScene } from '../models/domain'
+import { formatDisplayDate, formatDueStatus } from '../utils/date'
 
 const route = useRoute()
 const store = useAppStore()
@@ -129,6 +130,49 @@ const statusRows = computed(() => {
     { label: '归档原因', value: target.value.reason },
   ]
 })
+
+const timelineRows = computed(() => {
+  if (!result.value || !target.value) return []
+
+  const rows = [
+    { label: '训练日期', value: formatDisplayDate(result.value.createdAt) },
+    { label: '生成日期', value: formatDisplayDate(target.value.createdAt ?? result.value.createdAt) },
+  ]
+
+  if (result.value.targetKind === 'observation-task') {
+    rows.push(
+      { label: '观察期', value: `${formatDisplayDate(target.value.startDate)} 至 ${formatDisplayDate(target.value.dueDate)}` },
+      { label: '截止状态', value: formatDueStatus(target.value.dueDate) },
+    )
+  }
+
+  if (result.value.targetKind === 'cognitive-seed') {
+    const reminder = store.triggerReminders.find((item) => item.sourceId === result.value?.targetId)
+    if (reminder) {
+      rows.push(
+        { label: '下次检查', value: formatDisplayDate(reminder.nextCheckAt) },
+        { label: '到期状态', value: formatDueStatus(reminder.nextCheckAt) },
+      )
+    }
+  }
+
+  if (result.value.targetKind === 'archive') {
+    rows[1] = { label: '归档日期', value: formatDisplayDate(target.value.createdAt ?? result.value.createdAt) }
+  }
+
+  return rows
+})
+
+const aiSceneRows = computed(() => {
+  if (!result.value?.aiScenes) return []
+  return Object.entries(result.value.aiScenes)
+    .map(([scene, draft]) => ({
+      scene: businessSceneLabels[scene as BusinessScene],
+      relation: draft ? relationLabels[draft.relation] : '未生成',
+      reason: draft?.reason || '暂无理由',
+    }))
+    .filter((item) => item.scene)
+})
 </script>
 
 <template>
@@ -155,7 +199,7 @@ const statusRows = computed(() => {
           <div class="detail-hero__meta">
             <span>{{ relationLabel }}</span>
             <span>{{ result.statusLabel }}</span>
-            <span>{{ result.createdAt }}</span>
+            <span>训练于 {{ formatDisplayDate(result.createdAt) }}</span>
           </div>
           <h2>{{ target.title }}</h2>
         </div>
@@ -163,6 +207,13 @@ const statusRows = computed(() => {
 
       <section class="status-grid" aria-label="结果状态摘要">
         <article v-for="row in statusRows" :key="row.label" class="status-card">
+          <span>{{ row.label }}</span>
+          <strong>{{ row.value }}</strong>
+        </article>
+      </section>
+
+      <section class="status-grid" aria-label="时间线">
+        <article v-for="row in timelineRows" :key="row.label" class="status-card">
           <span>{{ row.label }}</span>
           <strong>{{ row.value }}</strong>
         </article>
@@ -191,6 +242,15 @@ const statusRows = computed(() => {
         </article>
       </section>
 
+      <section v-if="aiSceneRows.length" class="detail-block">
+        <h2>AI 企业场景建议</h2>
+        <ul class="detail-list">
+          <li v-for="item in aiSceneRows" :key="item.scene">
+            {{ item.scene }} · {{ item.relation }}：{{ item.reason }}
+          </li>
+        </ul>
+      </section>
+
       <section v-if="result.targetKind === 'problem'" class="detail-block">
         <h2>问题落地</h2>
         <p>{{ target.description }}</p>
@@ -213,6 +273,10 @@ const statusRows = computed(() => {
         <div class="detail-row">
           <span>周期</span>
           <strong>{{ target.period }}</strong>
+        </div>
+        <div class="detail-row">
+          <span>观察期</span>
+          <strong>{{ formatDisplayDate(target.startDate) }} 至 {{ formatDisplayDate(target.dueDate) }}</strong>
         </div>
         <div class="detail-row">
           <span>对象</span>

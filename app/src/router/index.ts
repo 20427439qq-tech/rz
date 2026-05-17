@@ -41,7 +41,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/score',
     name: 'score',
     component: ScoreView,
-    meta: { title: '复盘' },
+    meta: { title: '沉淀' },
   },
 ]
 
