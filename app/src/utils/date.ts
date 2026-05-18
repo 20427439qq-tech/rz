@@ -31,12 +31,12 @@ export function daysUntil(date: string, fromDate = todayInChina()) {
   return Math.round((target - from) / 86_400_000)
 }
 
-export function formatDisplayDate(date: string) {
+export function formatDisplayDate(date?: string) {
   if (!date) return ''
   return date
 }
 
-export function formatDisplayDateWithWeekday(date: string) {
+export function formatDisplayDateWithWeekday(date?: string) {
   if (!date) return ''
   const weekday = new Intl.DateTimeFormat('zh-CN', {
     timeZone: chinaTimeZone,
@@ -45,7 +45,8 @@ export function formatDisplayDateWithWeekday(date: string) {
   return `${date} ${weekday}`
 }
 
-export function formatDueStatus(date: string) {
+export function formatDueStatus(date?: string) {
+  if (!date) return '日期待补充'
   const diff = daysUntil(date)
   if (diff === 0) return '今天到期'
   if (diff > 0) return `剩余 ${diff} 天`

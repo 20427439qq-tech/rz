@@ -140,9 +140,11 @@ const timelineRows = computed(() => {
   ]
 
   if (result.value.targetKind === 'observation-task') {
+    const startDate = target.value.startDate || target.value.createdAt || result.value.createdAt
+    const dueDate = target.value.dueDate
     rows.push(
-      { label: '观察期', value: `${formatDisplayDate(target.value.startDate)} 至 ${formatDisplayDate(target.value.dueDate)}` },
-      { label: '截止状态', value: formatDueStatus(target.value.dueDate) },
+      { label: '观察期', value: dueDate ? `${formatDisplayDate(startDate)} 至 ${formatDisplayDate(dueDate)}` : '日期待补充' },
+      { label: '截止状态', value: formatDueStatus(dueDate) },
     )
   }
 
@@ -276,7 +278,13 @@ const aiSceneRows = computed(() => {
         </div>
         <div class="detail-row">
           <span>观察期</span>
-          <strong>{{ formatDisplayDate(target.startDate) }} 至 {{ formatDisplayDate(target.dueDate) }}</strong>
+          <strong>
+            {{
+              target.dueDate
+                ? `${formatDisplayDate(target.startDate || target.createdAt || result.createdAt)} 至 ${formatDisplayDate(target.dueDate)}`
+                : '日期待补充'
+            }}
+          </strong>
         </div>
         <div class="detail-row">
           <span>对象</span>

@@ -438,7 +438,11 @@ async function testCurrentAiConfig() {
   aiTesting.value = true
   aiMessage.value = ''
   try {
-    const result = await testAiConfig()
+    const result = await testAiConfig({
+      model: aiSettings.model,
+      apiKey: aiSettings.apiKey,
+      baseURL: aiSettings.baseURL,
+    })
     aiMessage.value = `连接正常：${result.model}`
   } catch (error) {
     aiMessage.value = error instanceof Error ? error.message : 'AI 连接失败'
@@ -472,8 +476,7 @@ async function generateViewpointWithAi() {
     sourceViewpointId.value = ''
     sourceSupportText.value = ''
     viewpoint.value = result.viewpoint
-    aiDraft.value = undefined
-    savedAiScenes.value = {}
+    clearDraftFields()
     aiTextFields.viewpoint = true
     saved.value = false
     aiMessage.value = 'AI 已生成观点，可直接修改或继续拆解'

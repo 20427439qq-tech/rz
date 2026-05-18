@@ -19,7 +19,7 @@ pinia.use(({ store }) => {
           item.id?.startsWith('vp-review-'),
         )
         const preservedViewpoints = parsedState.viewpoints.filter(
-          (item: { id?: string; status?: string }) => item.status !== 'draft' && !item.id?.startsWith('vp-review-'),
+          (item: { id?: string }) => !item.id?.startsWith('vp-review-'),
         )
         parsedState.viewpoints = [...preservedViewpoints, ...reviewViewpoints]
       }

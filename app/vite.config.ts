@@ -141,7 +141,7 @@ function resolveActiveConfig(override: Partial<ActiveConfig> = {}): ActiveConfig
   const config = readConfigFile()
   const models = config.savedModels || []
   const model = String(override.model || config.activeModel || models[0]?.name || defaultModel).trim()
-  const saved = models.find((item) => item.name === model) || models[0]
+  const saved = models.find((item) => item.name === model) || (override.model ? undefined : models[0])
   return {
     model,
     apiKey: String(override.apiKey || (saved ? decryptKey(saved.apiKey) : '') || '').trim(),
@@ -151,9 +151,10 @@ function resolveActiveConfig(override: Partial<ActiveConfig> = {}): ActiveConfig
 
 function publicConfig() {
   const config = readConfigFile()
+  const savedModels = config.savedModels || []
   return {
-    activeModel: config.activeModel || defaultModel,
-    savedModels: (config.savedModels || []).map((item) => {
+    activeModel: config.activeModel || savedModels[0]?.name || defaultModel,
+    savedModels: savedModels.map((item) => {
       const plain = decryptKey(item.apiKey)
       return {
         name: item.name,
@@ -165,13 +166,18 @@ function publicConfig() {
   }
 }
 
+function normalizeBaseURL(input: string | undefined) {
+  let baseURL = String(input || '').trim() || defaultBaseURL
+  if (baseURL && !/^https?:\/\//i.test(baseURL)) baseURL = `https://${baseURL}`
+  return baseURL
+}
+
 function saveModelConfig(input: Partial<ActiveConfig>) {
   const config = readConfigFile()
   const models = config.savedModels || []
   const model = String(input.model || '').trim()
   if (!model) throw new Error('模型名称不能为空')
-  let baseURL = String(input.baseURL || '').trim() || defaultBaseURL
-  if (baseURL && !/^https?:\/\//i.test(baseURL)) baseURL = `https://${baseURL}`
+  const baseURL = normalizeBaseURL(input.baseURL)
   const existingIndex = models.findIndex((item) => item.name === model)
   const existing = existingIndex >= 0 ? models[existingIndex] : undefined
   const apiKey = String(input.apiKey || '').trim()
@@ -684,10 +690,17 @@ function installAiMiddleware(server: { middlewares: { use: Function } }) {
     }
   })
 
-  server.middlewares.use('/api/ai/test', async (_req: IncomingMessage, res: ServerResponse) => {
+  server.middlewares.use('/api/ai/test', async (req: IncomingMessage, res: ServerResponse) => {
     try {
-      const text = await callAi('你是连接测试助手，只回复 OK。', '回复 OK', { maxTokens: 16 })
-      return sendJson(res, 200, { ok: true, text: text.slice(0, 40), model: resolveActiveConfig().model })
+      if (req.method !== 'POST') return sendJson(res, 405, { error: 'method not allowed' })
+      const body = await readJsonBody(req)
+      const override = {
+        model: String(body.model || '').trim(),
+        apiKey: String(body.apiKey || '').trim(),
+        baseURL: normalizeBaseURL(body.baseURL),
+      }
+      const text = await callAi('你是连接测试助手，只回复 OK。', '回复 OK', { maxTokens: 16, override })
+      return sendJson(res, 200, { ok: true, text: text.slice(0, 40), model: resolveActiveConfig(override).model })
     } catch (error) {
       return sendJson(res, 500, { ok: false, error: error instanceof Error ? error.message : String(error) })
     }

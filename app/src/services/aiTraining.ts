@@ -67,8 +67,14 @@ export async function saveAiConfig(input: AiConfigInput) {
   )
 }
 
-export async function testAiConfig() {
-  return readResponse<{ ok: boolean; model: string; text: string }>(await fetch('/api/ai/test'))
+export async function testAiConfig(input: AiConfigInput) {
+  return readResponse<{ ok: boolean; model: string; text: string }>(
+    await fetch('/api/ai/test', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(input),
+    }),
+  )
 }
 
 export async function generateViewpoint() {
