@@ -32,6 +32,9 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:1.1.0")
     implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("org.postgresql:postgresql:42.7.8")
+    implementation("org.flywaydb:flyway-core:12.6.1")
+    implementation("org.flywaydb:flyway-database-postgresql:12.6.1")
+    implementation("at.favre.lib:bcrypt:0.10.2")
 
     implementation("org.redisson:redisson:4.2.0")
     implementation("ch.qos.logback:logback-classic:1.5.21")

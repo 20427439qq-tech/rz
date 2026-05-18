@@ -3,9 +3,9 @@ package com.rz.gateway.skeleton.orm
 import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.ResultRow
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder
 import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
 import org.jetbrains.exposed.v1.javatime.datetime
 import org.jetbrains.exposed.v1.jdbc.Query
@@ -40,14 +40,14 @@ abstract class BaseTable<T : BaseEntity>(tableName: String) : Table(tableName) {
 
     fun selectById(value: Int): T? = transaction {
         baseQuery()
-            .where { (deleted eq false) and (id eq value) }
+            .where { (deleted eq false) and (this@BaseTable.id eq value) }
             .singleOrNull()
             ?.let(::toEntity)
     }
 
-    fun selectBy(where: SqlExpressionBuilder.() -> Op<Boolean>): List<T> = transaction {
+    fun selectBy(where: () -> Op<Boolean>): List<T> = transaction {
         baseQuery()
-            .where { (deleted eq false) and SqlExpressionBuilder.where() }
+            .where { (deleted eq false) and where() }
             .map(::toEntity)
     }
 
@@ -81,20 +81,20 @@ abstract class BaseTable<T : BaseEntity>(tableName: String) : Table(tableName) {
         val statement = insert {
             fillCreate(entity, it)
         }
-        statement[id]
+        statement[this@BaseTable.id]
     }
 
     fun update(entity: T): Boolean {
         val entityId = entity.id ?: return false
         return transaction {
-            update({ (id eq entityId) and (deleted eq false) }) {
+            update({ (this@BaseTable.id eq entityId) and (deleted eq false) }) {
                 fillUpdate(entity, it)
             } > 0
         }
     }
 
     fun softDelete(value: Int): Boolean = transaction {
-        update({ (id eq value) and (deleted eq false) }) {
+        update({ (this@BaseTable.id eq value) and (deleted eq false) }) {
             it[deleted] = true
             it[deleteTime] = LocalDateTime.now()
             it[updateTime] = LocalDateTime.now()
@@ -104,7 +104,7 @@ abstract class BaseTable<T : BaseEntity>(tableName: String) : Table(tableName) {
     fun batchInsert(entities: Iterable<T>): List<Int> = transaction {
         batchInsert(entities) { entity ->
             fillCreate(entity, this)
-        }.map { it[id] }
+        }.map { it[this@BaseTable.id] }
     }
 
     private fun baseQuery(): Query =

@@ -7,6 +7,8 @@ import router from './router'
 const pinia = createPinia()
 
 pinia.use(({ store }) => {
+  if (store.$id === 'auth') return
+
   const storageKey = `rz-judgment-system:${store.$id}`
   const savedState = window.localStorage.getItem(storageKey)
   const defaultState = JSON.parse(JSON.stringify(store.$state))

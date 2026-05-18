@@ -5,8 +5,17 @@ import PoolsView from '../views/PoolsView.vue'
 import ResultDetailView from '../views/ResultDetailView.vue'
 import MatchView from '../views/MatchView.vue'
 import ScoreView from '../views/ScoreView.vue'
+import LoginView from '../views/LoginView.vue'
+import AdminUsersView from '../views/AdminUsersView.vue'
+import { useAuthStore } from '../stores/authStore'
 
 export const routes: RouteRecordRaw[] = [
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView,
+    meta: { title: '登录', public: true },
+  },
   {
     path: '/',
     name: 'home',
@@ -43,11 +52,38 @@ export const routes: RouteRecordRaw[] = [
     component: ScoreView,
     meta: { title: '沉淀' },
   },
+  {
+    path: '/admin/users',
+    name: 'admin-users',
+    component: AdminUsersView,
+    meta: { title: '账号配置', admin: true },
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+router.beforeEach(async (to) => {
+  const auth = useAuthStore()
+  await auth.ensureLoaded()
+
+  if (to.meta.public) {
+    if (auth.isLoggedIn && to.name === 'login') return '/'
+    return true
+  }
+
+  if (!auth.isLoggedIn) {
+    return {
+      path: '/login',
+      query: { redirect: to.fullPath },
+    }
+  }
+
+  if (to.meta.admin && !auth.isAdmin) return '/'
+
+  return true
 })
 
 router.afterEach((to) => {

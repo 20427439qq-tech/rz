@@ -1,5 +1,11 @@
 package com.rz.gateway.skeleton
 
+import com.rz.gateway.skeleton.auth.AuthConfig
+import com.rz.gateway.skeleton.auth.AuthRepository
+import com.rz.gateway.skeleton.auth.AuthService
+import com.rz.gateway.skeleton.auth.adminRoutes
+import com.rz.gateway.skeleton.auth.authRoutes
+import com.rz.gateway.skeleton.auth.installAuthInterceptor
 import com.rz.gateway.skeleton.config.DatabaseFactory
 import com.rz.gateway.skeleton.redis.Redis
 import com.rz.gateway.skeleton.response.R
@@ -32,12 +38,21 @@ fun Application.module() {
 
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            environment.log.error("Unhandled request error", cause)
+            this@module.environment.log.error("Unhandled request error", cause)
             call.respond(HttpStatusCode.InternalServerError, R.error("internal server error"))
         }
     }
 
     DatabaseFactory.init(this)
+    val authConfig = AuthConfig.from(this)
+    val authService = if (authConfig.enabled) {
+        AuthService(authConfig, AuthRepository(DatabaseFactory.requireDataSource())).also {
+            it.bootstrap()
+            installAuthInterceptor(it)
+        }
+    } else {
+        null
+    }
     Redis.init(this)
 
     environment.monitor.subscribe(ApplicationStopping) {
@@ -47,6 +62,10 @@ fun Application.module() {
 
     routing {
         healthRoutes()
+        if (authService != null) {
+            authRoutes(authService)
+            adminRoutes(authService)
+        }
         exampleBusinessRoutes(ExampleService())
     }
 }

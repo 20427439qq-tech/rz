@@ -89,6 +89,64 @@ p {
   padding-bottom: calc(86px + env(safe-area-inset-bottom));
 }
 
+.app-frame--plain .app-main {
+  padding-bottom: 0;
+}
+
+.app-authbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: 52px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(251, 252, 248, 0.96);
+  backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+}
+
+.app-authbar div {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.app-authbar span {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 760;
+  overflow-wrap: anywhere;
+}
+
+.app-authbar em {
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 740;
+}
+
+.app-authbar nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.authbar-button {
+  width: 34px;
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--accent-strong);
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
 .screen {
   display: flex;
   flex-direction: column;
@@ -1752,6 +1810,160 @@ p {
   border-radius: inherit;
   background: var(--accent-strong);
   transition: width 0.25s ease;
+}
+
+.login-screen {
+  min-height: 100svh;
+  display: grid;
+  align-items: center;
+  padding: 28px 18px;
+  background:
+    linear-gradient(180deg, rgba(47, 118, 98, 0.08), transparent 38%),
+    var(--surface);
+}
+
+.login-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 18px;
+  display: grid;
+  gap: 18px;
+}
+
+.login-brand {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.login-brand > span {
+  width: 44px;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: #e5efe7;
+  color: var(--accent-strong);
+}
+
+.login-form,
+.admin-form {
+  display: grid;
+  gap: 12px;
+}
+
+.login-form label,
+.admin-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 740;
+}
+
+.login-form input,
+.admin-form input,
+.admin-form select {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  padding: 0 11px;
+}
+
+.login-form button:disabled,
+.admin-form button:disabled,
+.user-row__actions button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.login-message,
+.admin-message {
+  border: 1px solid #e5cfad;
+  border-radius: 8px;
+  background: #fff8ed;
+  color: #8a5615;
+  padding: 10px;
+  font-weight: 720;
+}
+
+.admin-screen {
+  gap: 14px;
+}
+
+.admin-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 14px;
+}
+
+.admin-card__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent-strong);
+}
+
+.admin-check {
+  min-height: 42px;
+  display: flex !important;
+  grid-template-columns: auto minmax(0, 1fr);
+  flex-direction: row;
+  align-items: center;
+}
+
+.admin-check input {
+  min-height: auto;
+  width: 18px;
+  aspect-ratio: 1;
+}
+
+.admin-list {
+  display: grid;
+  gap: 10px;
+}
+
+.user-row {
+  display: grid;
+  gap: 12px;
+}
+
+.user-row__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.user-row__title strong {
+  color: var(--text);
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+
+.user-row__title span {
+  border-radius: 999px;
+  background: var(--surface-muted);
+  color: var(--muted);
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 740;
+}
+
+.user-row__actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.user-row__actions button {
+  min-height: 42px;
+  padding: 0 8px;
 }
 
 .spin-icon {

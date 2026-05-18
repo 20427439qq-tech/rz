@@ -860,6 +860,12 @@ export default defineConfig({
     },
   ],
   server: {
+    proxy: {
+      '/api/auth': 'http://localhost:8080',
+      '/api/admin': 'http://localhost:8080',
+      '/api/examples': 'http://localhost:8080',
+      '/health': 'http://localhost:8080',
+    },
     fs: {
       allow: ['..', 'C:\\Users\\20427\\Documents\\000\\xuexi'],
     },
